@@ -150,7 +150,7 @@ router.delete('/:code', async (req, res, next) => {
             throw new ExpressError(`Error!: No company found with code "${req.params.code}"`, 404)
         }
 
-        return res.json(result.rows[0])
+        return res.json({status:"deleted"})
 
     } catch(e) {
 

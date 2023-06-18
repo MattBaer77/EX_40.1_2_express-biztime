@@ -36,13 +36,22 @@ router.get('/:id', async (req, res, next) => {
 
     try{
 
-        const result = await db.query(`SELECT * FROM invoices WHERE id = $1`, [req.params.id])
+        const result = await db.query( `SELECT i.id, i.amt, i.paid, i.add_date, i.paid_date, c.code, c.name, c.description
+                                        FROM invoices AS i
+                                        JOIN companies AS c
+                                        ON i.comp_code = c.code
+                                        WHERE id = $1`,
+                                        [req.params.id]
+                                    )
 
         if (result.rows.length === 0) {
-            throw new ExpressError(`Error!: No company found with id "${req.params.id}"`, 404)
+            throw new ExpressError(`Error!: No invoice found with id "${req.params.id}"`, 404)
         }
 
-        return res.json({company: result.rows[0]})
+        const {id, amt, paid, add_date, paid_date, code, name} = result.rows[0]
+        const invoice = {invoice: id, amt, paid, add_date, paid_date, company : {code, name}}
+
+        return res.json(invoice)
 
     } catch(e){
 
@@ -63,23 +72,26 @@ router.post('/', async (req, res, next) => {
 
     try{
 
-        const id = req.body.id
         const comp_code = req.body.comp_code
         const amt = req.body.amt
 
         const result = await db.query(
-            `INSERT INTO invoices
-            VALUES ($1, $2, $3)
-            RETURNING id, comp_code, amt`,
-            [id, comp_code, amt]
+            `INSERT INTO invoices (comp_code, amt)
+            VALUES ($1, $2)
+            RETURNING id, comp_code, amt, paid, add_date, paid_date;`,
+            [comp_code, amt]
         )
 
         return res.json(result.rows[0])
 
     } catch(e){
 
-        if (e.id === '23505') {
-            e = new ExpressError(`Error!: Could not create this company`, 403)
+        if (e.code === '23502') {
+            e = new ExpressError(`Error!: Must include comp_code and amt in request`, 400)
+        }
+
+        if (e.code === '23503') {
+            e = new ExpressError(`Error!: No company with code '${req.body.comp_code}'`, 403)
         }
 
         return next(e);
@@ -99,24 +111,28 @@ router.put('/:id', async (req, res, next) => {
 
     try{
 
-        const id = req.params.id
-        const comp_code = req.body.comp_code
-        const amt = req.body.amt
+        const reqId = req.params.id
+        const reqAmt = req.body.amt
 
         const result = await db.query(
-            `UPDATE invoices SET comp_code = $2, amt = $3 WHERE id = $1
-            RETURNING id, comp_code, amt`,
-            [id, comp_code, amt]
+            `UPDATE invoices SET amt = $2 WHERE id = $1
+            RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+            [reqId, reqAmt]
         )
 
         if (result.rows.length === 0) {
             throw new ExpressError(`Error!: No company found with id "${req.params.id}"`, 404)
         }
 
-        return res.json(result.rows[0])
+        const {id, comp_code, amt, paid, add_date, paid_date} = result.rows[0]
+
+        return res.json({invoice : {id, comp_code, amt, paid, add_date, paid_date}})
 
     } catch(e){
 
+        if (e.code === '23502') {
+            e = new ExpressError(`Error!: Must include amt in request`, 400)
+        }
         return next(e);
 
     }
@@ -143,10 +159,10 @@ router.delete('/:id', async (req, res, next) => {
         )
 
         if (result.rows.length === 0) {
-            throw new ExpressError(`Error!: No company found with id "${req.params.id}"`, 404)
+            throw new ExpressError(`Error!: No company found with id '${req.params.id}'`, 404)
         }
 
-        return res.json(result.rows[0])
+        return res.json({status:"deleted"})
 
     } catch(e) {
 
