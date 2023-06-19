@@ -38,7 +38,7 @@ router.get('/:code', async (req, res, next) => {
         const result = await db.query(
             `SELECT c.code, c.name, c.description, i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date
             FROM companies AS c
-            JOIN invoices AS i
+            LEFT JOIN invoices AS i
             ON c.code = i.comp_code
             WHERE code = $1;`,
         [req.params.code]);
@@ -50,7 +50,11 @@ router.get('/:code', async (req, res, next) => {
         const {code, name, description} = result.rows[0];
 
         const invoices = result.rows.map((r) => {
-            return {id: r.id, comp_code: r.comp_code, amt: r.amt, paid: r.paid, add_date: r.add_date, paid_date : r.paid_date}
+            
+            if (r.id != null) {
+                return {id: r.id, comp_code: r.comp_code, amt: r.amt, paid: r.paid, add_date: r.add_date, paid_date : r.paid_date}
+            }
+
         })
 
         return res.json({code, name, invoices})
