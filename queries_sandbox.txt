@@ -36,3 +36,10 @@ FROM companies AS c
 JOIN invoices AS i
 ON c.code = i.comp_code
 WHERE code = 'apple';
+
+
+SELECT c.code, c.name, c.description, i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date
+FROM companies AS c
+JOIN invoices AS i
+ON c.code = i.comp_code
+WHERE code = 'apple';
