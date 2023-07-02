@@ -57,7 +57,7 @@ router.get('/:code', async (req, res, next) => {
 
         })
 
-        return res.json({code, name, invoices})
+        return res.json({"company" : {code, name, description, invoices}})
 
     } catch(e){
 
@@ -94,7 +94,11 @@ router.post('/', async (req, res, next) => {
     } catch(e){
 
         if (e.code === '23505') {
-            e = new ExpressError(`Error!: Could not create this company`, 403)
+            e = new ExpressError(`Error!: Could not create this company`, 400)
+        }
+
+        if (e.code === '23502') {
+            e = new ExpressError(`Error!: Could not create this company. Bad Request - 'companies' must have properties: 'code' and 'name'`, 400)
         }
 
         return next(e);
