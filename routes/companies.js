@@ -5,6 +5,8 @@ const ExpressError = require("../expressError")
 const router = express.Router();
 const db = require("../db");
 
+// slugify
+const slugify = require('slugify')
 
 /*
 GET /companies
