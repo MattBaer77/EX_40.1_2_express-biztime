@@ -80,8 +80,13 @@ router.post('/', async (req, res, next) => {
 
     try{
 
-        const code = slugify(req.body.name, {replacement:"-", lower:true, strict:true, trim:true})
         const name = req.body.name
+
+        if (!name) {
+            throw new ExpressError(`Error!: Could not create this company. Bad Request - 'companies' must have properties: 'name'`, 400)
+        }
+
+        const code = slugify(req.body.name, {replacement:"-", lower:true, strict:true, trim:true})
         console.log(name)
         const description = req.body.description
 

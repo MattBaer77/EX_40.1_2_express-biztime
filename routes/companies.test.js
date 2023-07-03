@@ -97,23 +97,25 @@ describe("POST /companies", () => {
 
     })
 
-    test("Post a new company - ERROR - No Code", async () => {
+    // ELIMINATE TEST DUE TO SLUGIFY IMPLEMENTATION
+    // test("Post a new company - ERROR - No Code", async () => {
 
-        const res = await request(app).post("/companies").send(testCompany3)
-        expect(res.statusCode).toBe(400);
-        expect(res.body.code).toEqual(undefined)
-        expect(res.body.name).toEqual(undefined)
-        expect(res.body.error.message).toEqual("Error!: Could not create this company. Bad Request - 'companies' must have properties: 'code' and 'name'")
+    //     const res = await request(app).post("/companies").send(testCompany3)
+    //     expect(res.statusCode).toBe(400);
+    //     expect(res.body.code).toEqual(undefined)
+    //     expect(res.body.name).toEqual(undefined)
+    //     expect(res.body.error.message).toEqual("Error!: Could not create this company. Bad Request - 'companies' must have properties: 'code' and 'name'")
 
-    })
+    // })
 
     test("Post a new company - ERROR - No Name", async () => {
 
         const res = await request(app).post("/companies").send(testCompany4)
+        console.log(res.body)
         expect(res.statusCode).toBe(400);
         expect(res.body.code).toEqual(undefined)
         expect(res.body.name).toEqual(undefined)
-        expect(res.body.error.message).toEqual("Error!: Could not create this company. Bad Request - 'companies' must have properties: 'code' and 'name'")
+        expect(res.body.error.message).toEqual("Error!: Could not create this company. Bad Request - 'companies' must have properties: 'name'")
 
     })
 
