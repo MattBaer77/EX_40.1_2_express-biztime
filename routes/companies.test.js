@@ -167,7 +167,6 @@ describe("PUT /companies/:code", () => {
         expect(res.body.description).toBe(undefined)
         expect(res.body.error.message).toEqual("Error!: Could not edit this company. Bad Request - 'companies' must have properties: 'name'")
 
-
     })
 
     test("Put - edit a company - name/description - ERROR - INCORRECT CODE", async () => {
@@ -181,9 +180,26 @@ describe("PUT /companies/:code", () => {
 
     })
 
+})
 
+describe("DELETE /companies/:code", () => {
 
+    test("Delete - delete a company - SUCCESS", async () => {
 
+        const res = await request(app).delete(`/companies/${testcompany1.code}`)
 
+        expect(res.statusCode).toBe(200)
+        expect(res.body.status).toEqual("deleted")
+
+    })
+
+    test("Delete - delete a company - FAIL - DOES NOT EXIST", async () => {
+
+        const res = await request(app).delete(`/companies/notAValidCompany`)
+
+        expect(res.statusCode).toBe(404)
+        expect(res.body.error.message).toEqual(`Error!: No company found with code "notAValidCompany"`)
+
+    })
 
 })
