@@ -6,6 +6,9 @@ const app = require('../app')
 
 const db = require('../db')
 
+// slugify
+const slugify = require('slugify')
+
 let testCompany1 = {code: "test1co", name: "Test1Co", description : "The first test company"};
 let testCompany2 = {code: "test2co", name: "Test2Co", description : "The second test company"};
 
@@ -97,16 +100,15 @@ describe("POST /companies", () => {
 
     })
 
-    // ELIMINATE TEST DUE TO SLUGIFY IMPLEMENTATION
-    // test("Post a new company - ERROR - No Code", async () => {
+    // MODIFY TEST DUE TO SLUGIFY IMPLEMENTATION
+    test("Post a new company - ERROR - No Code", async () => {
 
-    //     const res = await request(app).post("/companies").send(testCompany3)
-    //     expect(res.statusCode).toBe(400);
-    //     expect(res.body.code).toEqual(undefined)
-    //     expect(res.body.name).toEqual(undefined)
-    //     expect(res.body.error.message).toEqual("Error!: Could not create this company. Bad Request - 'companies' must have properties: 'code' and 'name'")
+        const res = await request(app).post("/companies").send(testCompany3)
+        expect(res.statusCode).toBe(200);
+        expect(res.body.code).toEqual(slugify(testCompany3.name , {replacement:"-", lower:true, strict:true, trim:true}))
+        expect(res.body.name).toEqual(testCompany3.name)
 
-    // })
+    })
 
     test("Post a new company - ERROR - No Name", async () => {
 
