@@ -80,8 +80,9 @@ router.post('/', async (req, res, next) => {
 
     try{
 
-        const code = req.body.code
+        const code = slugify(req.body.name, {replacement:"-", lower:true, strict:true, trim:true})
         const name = req.body.name
+        console.log(name)
         const description = req.body.description
 
         const result = await db.query(
