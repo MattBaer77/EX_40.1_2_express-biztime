@@ -125,6 +125,10 @@ router.put('/:code', async (req, res, next) => {
         const name = req.body.name
         const description = req.body.description
 
+        if (!name) {
+            throw new ExpressError(`Error!: Could not edit this company. Bad Request - 'companies' must have properties: 'name'`, 400)
+        }
+
         const result = await db.query(
             `UPDATE companies SET name = $2, description = $3 WHERE code = $1
             RETURNING code, name, description`,

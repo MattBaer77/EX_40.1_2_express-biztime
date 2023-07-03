@@ -121,3 +121,69 @@ describe("POST /companies", () => {
 
 
 })
+
+describe("PUT /companies/:code", () => {
+
+    test("Put - edit a company - name/description - SUCCESS", async () => {
+
+        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany3)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.code).toBe(testcompany1.code)
+        expect(res.body.name).toBe(testcompany3.name)
+        expect(res.body.description).toBe(testcompany3.description)
+
+    })
+
+    test("Put - edit a company - name only - SUCCESS", async () => {
+
+        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany5)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.code).toBe(testcompany1.code)
+        expect(res.body.name).toBe(testcompany5.name)
+        expect(res.body.description).toBe(null)
+
+    })
+
+    test("Put - edit a company - name/description - SUCCESS - SENT WITH CODE (Disregarded)", async () => {
+
+        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany2)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.code).toBe(testcompany1.code)
+        expect(res.body.name).toBe(testcompany2.name)
+        expect(res.body.description).toBe(testcompany2.description)
+
+    })
+
+    test("Put - edit a company - description only - ERROR", async () => {
+
+        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany4)
+
+        expect(res.statusCode).toBe(400)
+        expect(res.body.code).toBe(undefined)
+        expect(res.body.name).toBe(undefined)
+        expect(res.body.description).toBe(undefined)
+        expect(res.body.error.message).toEqual("Error!: Could not edit this company. Bad Request - 'companies' must have properties: 'name'")
+
+
+    })
+
+    test("Put - edit a company - name/description - ERROR - INCORRECT CODE", async () => {
+
+        const res = await request(app).put(`/companies/notAValidCompany`).send(testcompany3)
+
+        expect(res.statusCode).toBe(404)
+        expect(res.body.code).toEqual(undefined)
+        expect(res.body.name).toEqual(undefined)
+        expect(res.body.error.message).toEqual(`Error!: No company found with code "notAValidCompany"`)
+
+    })
+
+
+
+
+
+
+})
