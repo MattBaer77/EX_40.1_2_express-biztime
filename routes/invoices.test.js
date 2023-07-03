@@ -22,7 +22,8 @@ let testCompany4 = {code: "test4co", description : "The fourth test company"};
 let testCompany5 = {code: "test5co", name: "Test5Co"};
 
 // Invoices
-let testInvoice1 = {}
+let testInvoice1 = {comp_code: testCompany1.code, amt: 1}
+let testInvoice2 = {comp_code: testCompany1.code, amt: 2}
 
 // beforeAll(async() => {
 //     await db.query(
@@ -32,25 +33,53 @@ let testInvoice1 = {}
 //         )
 // })
 
-beforeEach(async() => {
+beforeAll(async () => {
+
     await db.query(
         `INSERT INTO companies
         VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
         RETURNING code, name, description`
         )
 
-    await db.query(
-        `INSERT INTO invoices
-        VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
-        RETURNING code, name, description`
+})
+
+beforeEach(async() => {
+
+   await db.query(
+        `INSERT INTO invoices (comp_code, amt)
+        VALUES ('${testCompany1.code}', ${testInvoice1.amt})
+        RETURNING id, comp_code, amt, paid, add_date, paid_date;`
         )
+
+   await db.query(
+        `INSERT INTO invoices (comp_code, amt)
+        VALUES ('${testCompany1.code}', ${testInvoice2.amt})
+        RETURNING id, comp_code, amt, paid, add_date, paid_date;`
+        )
+
 })
 
 afterEach(async() => {
-    await db.query(`DELETE FROM companies`)
     await db.query(`DELETE FROM invoices`)
 })
 
 afterAll(async() => {
+    await db.query(`DELETE FROM companies`)
     await db.end()
 })
+
+// Tests
+
+describe("GET /invoices", () => {
+
+    test("Get all invoices", async() => {
+
+        const res = await request(app).get("/invoices")
+        expect(res.statusCode).toBe(200)
+        expect(res.body.invoices[0].comp_code).toEqual(testCompany1.code)
+        expect(res.body.invoices[1].comp_code).toEqual(testCompany1.code)
+
+    })
+
+})
+
