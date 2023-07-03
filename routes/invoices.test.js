@@ -164,3 +164,55 @@ describe("POST /invoices", () => {
     })
 
 })
+
+describe("PUT /invoices/:id", () => {
+
+    test("PUT - edit an invoice - SUCCESS", async() => {
+
+        const res = await request(app).put(`/invoices/${testInvoice.id}`).send(testInvoice3)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.invoice.comp_code).toEqual(testInvoice.comp_code)
+        expect(res.body.invoice.amt).toEqual(testInvoice3.amt)
+
+    })
+
+    test("PUT - edit an invoice - ERROR - NO AMT", async() => {
+
+        const res = await request(app).put(`/invoices/${testInvoice.id}`).send(testInvoice5)
+
+        console.log(res.body)
+
+        expect(res.statusCode).toBe(400)
+        expect(res.body.error.message).toEqual(`Error!: Must include amt in request`)
+
+    })
+
+    test("PUT - edit an invoice - SUCCESS - NO COMP_CODE", async() => {
+
+        const res = await request(app).put(`/invoices/${testInvoice.id}`).send(testInvoice4)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.invoice.comp_code).toEqual(testInvoice.comp_code)
+        expect(res.body.invoice.amt).toEqual(testInvoice4.amt)
+
+    })
+
+
+})
+
+describe("DELETE /invoices/:id", () => {
+
+    test("DELETE - delete an invoice - SUCCESS", async() => {
+
+        const res = await request(app).delete(`/invoices/${testInvoice.id}`)
+
+        console.log(res.body)
+
+        expect(res.statusCode).toBe(200)
+        expect(res.body.status).toEqual(`deleted`)
+
+
+    })
+
+})
