@@ -96,15 +96,22 @@ describe("GET /invoices", () => {
 
 })
 
-describe("GET /invoices", () => {
+describe("GET /invoices/:id", () => {
 
     test("Get invoice by: id", async() => {
 
-        // console.log("hi")
-
         const res = await request(app).get(`/invoices/${testInvoice.id}`)
         expect(res.statusCode).toBe(200)
+        expect(res.body.amt).toEqual(testInvoice.amt)
+        expect(res.body.company.code).toEqual(testInvoice.comp_code)
 
+    })
+
+    test("Get invoice by: id - NO INVOICE WITH THAT ID", async() => {
+
+        const res = await request(app).get(`/invoices/${(testInvoice.id)-1}`)
+        expect(res.statusCode).toBe(404)
+        expect(res.body.error.message).toEqual(`Error!: No invoice found with id "${(testInvoice.id)-1}"`)
 
     })
 
