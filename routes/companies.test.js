@@ -6,19 +6,19 @@ const app = require('../app')
 
 const db = require('../db')
 
-let testcompany1 = {code: "test1co", name: "Test1Co", description : "The first test company"};
-let testcompany2 = {code: "test2co", name: "Test2Co", description : "The second test company"};
+let testCompany1 = {code: "test1co", name: "Test1Co", description : "The first test company"};
+let testCompany2 = {code: "test2co", name: "Test2Co", description : "The second test company"};
 
 // Malformed testcompanies
 
 // No Code
-let testcompany3 = {name: "Test3Co", description : "The third test company"};
+let testCompany3 = {name: "Test3Co", description : "The third test company"};
 
 // No Name
-let testcompany4 = {code: "test4co", description : "The fourth test company"};
+let testCompany4 = {code: "test4co", description : "The fourth test company"};
 
 // No Description
-let testcompany5 = {code: "test5co", name: "Test5Co"};
+let testCompany5 = {code: "test5co", name: "Test5Co"};
 
 // beforeAll(async() => {
 //     await db.query(
@@ -31,7 +31,7 @@ let testcompany5 = {code: "test5co", name: "Test5Co"};
 beforeEach(async() => {
     await db.query(
         `INSERT INTO companies
-        VALUES ('${testcompany1.code}', '${testcompany1.name}', '${testcompany1.description}')
+        VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
         RETURNING code, name, description`
         )
 })
@@ -52,7 +52,7 @@ describe("GET /companies", () => {
         const res = await request(app).get("/companies")
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.companies[0].code).toEqual(testcompany1.code)
+        expect(res.body.companies[0].code).toEqual(testCompany1.code)
 
     })
 })
@@ -63,9 +63,9 @@ describe("GET /companies/:code", () => {
         const res = await request(app).get("/companies/test1co")
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.company.code).toEqual(testcompany1.code)
-        expect(res.body.company.name).toEqual(testcompany1.name)
-        expect(res.body.company.description).toEqual(testcompany1.description)
+        expect(res.body.company.code).toEqual(testCompany1.code)
+        expect(res.body.company.name).toEqual(testCompany1.name)
+        expect(res.body.company.description).toEqual(testCompany1.description)
 
     })
 
@@ -82,24 +82,24 @@ describe("POST /companies", () => {
     
     test("Post a new company - SUCCESS", async () => {
 
-        const res = await request(app).post("/companies").send(testcompany2)
+        const res = await request(app).post("/companies").send(testCompany2)
         expect(res.statusCode).toBe(200);
 
     })
 
     test("Post a new company - SUCCESS - No Description", async () => {
 
-        const res = await request(app).post("/companies").send(testcompany5)
+        const res = await request(app).post("/companies").send(testCompany5)
         expect(res.statusCode).toBe(200);
-        expect(res.body.code).toEqual(testcompany5.code)
-        expect(res.body.name).toEqual(testcompany5.name)
+        expect(res.body.code).toEqual(testCompany5.code)
+        expect(res.body.name).toEqual(testCompany5.name)
         expect(res.body.description).toEqual(null)
 
     })
 
     test("Post a new company - ERROR - No Code", async () => {
 
-        const res = await request(app).post("/companies").send(testcompany3)
+        const res = await request(app).post("/companies").send(testCompany3)
         expect(res.statusCode).toBe(400);
         expect(res.body.code).toEqual(undefined)
         expect(res.body.name).toEqual(undefined)
@@ -109,7 +109,7 @@ describe("POST /companies", () => {
 
     test("Post a new company - ERROR - No Name", async () => {
 
-        const res = await request(app).post("/companies").send(testcompany4)
+        const res = await request(app).post("/companies").send(testCompany4)
         expect(res.statusCode).toBe(400);
         expect(res.body.code).toEqual(undefined)
         expect(res.body.name).toEqual(undefined)
@@ -124,40 +124,40 @@ describe("PUT /companies/:code", () => {
 
     test("Put - edit a company - name/description - SUCCESS", async () => {
 
-        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany3)
+        const res = await request(app).put(`/companies/${testCompany1.code}`).send(testCompany3)
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.code).toBe(testcompany1.code)
-        expect(res.body.name).toBe(testcompany3.name)
-        expect(res.body.description).toBe(testcompany3.description)
+        expect(res.body.code).toBe(testCompany1.code)
+        expect(res.body.name).toBe(testCompany3.name)
+        expect(res.body.description).toBe(testCompany3.description)
 
     })
 
     test("Put - edit a company - name only - SUCCESS", async () => {
 
-        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany5)
+        const res = await request(app).put(`/companies/${testCompany1.code}`).send(testCompany5)
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.code).toBe(testcompany1.code)
-        expect(res.body.name).toBe(testcompany5.name)
+        expect(res.body.code).toBe(testCompany1.code)
+        expect(res.body.name).toBe(testCompany5.name)
         expect(res.body.description).toBe(null)
 
     })
 
     test("Put - edit a company - name/description - SUCCESS - SENT WITH CODE (Disregarded)", async () => {
 
-        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany2)
+        const res = await request(app).put(`/companies/${testCompany1.code}`).send(testCompany2)
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.code).toBe(testcompany1.code)
-        expect(res.body.name).toBe(testcompany2.name)
-        expect(res.body.description).toBe(testcompany2.description)
+        expect(res.body.code).toBe(testCompany1.code)
+        expect(res.body.name).toBe(testCompany2.name)
+        expect(res.body.description).toBe(testCompany2.description)
 
     })
 
     test("Put - edit a company - description only - ERROR", async () => {
 
-        const res = await request(app).put(`/companies/${testcompany1.code}`).send(testcompany4)
+        const res = await request(app).put(`/companies/${testCompany1.code}`).send(testCompany4)
 
         expect(res.statusCode).toBe(400)
         expect(res.body.code).toBe(undefined)
@@ -169,7 +169,7 @@ describe("PUT /companies/:code", () => {
 
     test("Put - edit a company - name/description - ERROR - INCORRECT CODE", async () => {
 
-        const res = await request(app).put(`/companies/notAValidCompany`).send(testcompany3)
+        const res = await request(app).put(`/companies/notAValidCompany`).send(testCompany3)
 
         expect(res.statusCode).toBe(404)
         expect(res.body.code).toEqual(undefined)
@@ -184,7 +184,7 @@ describe("DELETE /companies/:code", () => {
 
     test("Delete - delete a company - SUCCESS", async () => {
 
-        const res = await request(app).delete(`/companies/${testcompany1.code}`)
+        const res = await request(app).delete(`/companies/${testCompany1.code}`)
 
         expect(res.statusCode).toBe(200)
         expect(res.body.status).toEqual("deleted")

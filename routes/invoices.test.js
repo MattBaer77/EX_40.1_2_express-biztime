@@ -6,19 +6,23 @@ const app = require('../app')
 
 const db = require('../db')
 
-let testcompany1 = {code: "test1co", name: "Test1Co", description : "The first test company"};
-let testcompany2 = {code: "test2co", name: "Test2Co", description : "The second test company"};
+// Companies
+let testCompany1 = {code: "test1co", name: "Test1Co", description : "The first test company"};
+let testCompany2 = {code: "test2co", name: "Test2Co", description : "The second test company"};
 
 // Malformed testcompanies
 
 // No Code
-let testcompany3 = {name: "Test3Co", description : "The third test company"};
+let testCompany3 = {name: "Test3Co", description : "The third test company"};
 
 // No Name
-let testcompany4 = {code: "test4co", description : "The fourth test company"};
+let testCompany4 = {code: "test4co", description : "The fourth test company"};
 
 // No Description
-let testcompany5 = {code: "test5co", name: "Test5Co"};
+let testCompany5 = {code: "test5co", name: "Test5Co"};
+
+// Invoices
+let testInvoice1 = {}
 
 // beforeAll(async() => {
 //     await db.query(
@@ -31,7 +35,13 @@ let testcompany5 = {code: "test5co", name: "Test5Co"};
 beforeEach(async() => {
     await db.query(
         `INSERT INTO companies
-        VALUES ('${testcompany1.code}', '${testcompany1.name}', '${testcompany1.description}')
+        VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
+        RETURNING code, name, description`
+        )
+
+    await db.query(
+        `INSERT INTO invoices
+        VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
         RETURNING code, name, description`
         )
 })
