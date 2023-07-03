@@ -25,6 +25,8 @@ let testCompany5 = {code: "test5co", name: "Test5Co"};
 let testInvoice1 = {comp_code: testCompany1.code, amt: 1}
 let testInvoice2 = {comp_code: testCompany1.code, amt: 2}
 
+let testInvoice;
+
 // beforeAll(async() => {
 //     await db.query(
 //         `DELETE FROM companies
@@ -33,7 +35,17 @@ let testInvoice2 = {comp_code: testCompany1.code, amt: 2}
 //         )
 // })
 
-beforeAll(async () => {
+// beforeAll(async () => {
+
+//     await db.query(
+//         `INSERT INTO companies
+//         VALUES ('${testCompany1.code}', '${testCompany1.name}', '${testCompany1.description}')
+//         RETURNING code, name, description`
+//         )
+
+// })
+
+beforeEach(async() => {
 
     await db.query(
         `INSERT INTO companies
@@ -41,11 +53,7 @@ beforeAll(async () => {
         RETURNING code, name, description`
         )
 
-})
-
-beforeEach(async() => {
-
-   await db.query(
+   const result= await db.query(
         `INSERT INTO invoices (comp_code, amt)
         VALUES ('${testCompany1.code}', ${testInvoice1.amt})
         RETURNING id, comp_code, amt, paid, add_date, paid_date;`
@@ -57,29 +65,93 @@ beforeEach(async() => {
         RETURNING id, comp_code, amt, paid, add_date, paid_date;`
         )
 
+    
+    testInvoice = result.rows[0]
+
 })
 
 afterEach(async() => {
+    // console.log(testInvoice)
     await db.query(`DELETE FROM invoices`)
+    await db.query(`DELETE FROM companies`)
+
 })
 
 afterAll(async() => {
-    await db.query(`DELETE FROM companies`)
+    // console.log(testInvoice)
+    // await db.query(`DELETE FROM companies`)
     await db.end()
 })
 
 // Tests
 
 describe("GET /invoices", () => {
+    
 
     test("Get all invoices", async() => {
+
+        // console.log(testInvoice)
+
 
         const res = await request(app).get("/invoices")
         expect(res.statusCode).toBe(200)
         expect(res.body.invoices[0].comp_code).toEqual(testCompany1.code)
         expect(res.body.invoices[1].comp_code).toEqual(testCompany1.code)
 
+        // console.log(testInvoice)
+
+
+        // console.log(res.body.invoices[0].id)
+        // console.log(res.body.invoices[1].id)
+
     })
+
+})
+
+// describe("GET /invoicez", () => {
+
+//     test("Get all invoicez", async() => {
+
+//         console.log("hi")
+//         console.log(testInvoice)
+
+//         const res = await request(app).get("/invoices")
+//         expect(res.statusCode).toBe(200)
+//         expect(res.body.invoices[0].comp_code).toEqual(testCompany1.code)
+//         expect(res.body.invoices[1].comp_code).toEqual(testCompany1.code)
+
+//         // console.log(res.body.invoices[0].id)
+//         // console.log(res.body.invoices[1].id)
+
+//     })
+
+// })
+
+describe("GET /invoices", () => {
+
+    // test("Get all invoices", async() => {
+
+    //     const res = await request(app).get("/invoices")
+    //     expect(res.statusCode).toBe(200)
+    //     expect(res.body.invoices[0].comp_code).toEqual(testCompany1.code)
+    //     expect(res.body.invoices[1].comp_code).toEqual(testCompany1.code)
+
+    //     // console.log(res.body.invoices[0].id)
+    //     // console.log(res.body.invoices[1].id)
+
+    // })
+
+    test("Get invoice by: id", async() => {
+
+        // console.log("hi")
+
+        const res = await request(app).get(`/invoices/${testInvoice.id}`)
+        expect(res.statusCode).toBe(200)
+        
+
+    })
+
+
 
 })
 
