@@ -24,6 +24,17 @@ let testCompany5 = {code: "test5co", name: "Test5Co"};
 // Invoices
 let testInvoice1 = {comp_code: testCompany1.code, amt: 1}
 let testInvoice2 = {comp_code: testCompany1.code, amt: 2}
+let testInvoice3 = {comp_code: testCompany1.code, amt: 3}
+
+// No Code
+let testInvoice4 = {amt: 3}
+
+// No Amt
+let testInvoice5 = {comp_code: testCompany1.code}
+
+// No Code & No Amt
+let testInvoice6 = {}
+
 
 let testInvoice;
 
@@ -117,3 +128,39 @@ describe("GET /invoices/:id", () => {
 
 })
 
+describe("POST /invoices", () => {
+
+    test("Post a new invoice - SUCCESS", async() => {
+
+        const res = await request(app).post(`/invoices`).send(testInvoice3)
+        expect(res.statusCode).toBe(200)
+        expect(res.body.comp_code).toEqual(testInvoice3.comp_code)
+        expect(res.body.amt).toEqual(testInvoice3.amt)
+
+    })
+
+    test("Post a new invoice - ERROR - NO CODE", async() => {
+
+        const res = await request(app).post(`/invoices`).send(testInvoice4)
+        expect(res.statusCode).toBe(400)
+        expect(res.body.error.message).toEqual(`Error!: Must include comp_code and amt in request`)
+
+    })
+
+    test("Post a new invoice - ERROR - NO AMT", async() => {
+
+        const res = await request(app).post(`/invoices`).send(testInvoice5)
+        expect(res.statusCode).toBe(400)
+        expect(res.body.error.message).toEqual(`Error!: Must include comp_code and amt in request`)
+
+    })
+
+    test("Post a new invoice - ERROR - NO CODE OR AMT", async() => {
+
+        const res = await request(app).post(`/invoices`).send(testInvoice6)
+        expect(res.statusCode).toBe(400)
+        expect(res.body.error.message).toEqual(`Error!: Must include comp_code and amt in request`)
+
+    })
+
+})
