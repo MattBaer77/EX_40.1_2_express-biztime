@@ -29,17 +29,16 @@ let testcompany5 = {code: "test5co", name: "Test5Co"};
 // })
 
 beforeEach(async() => {
-    const result = await db.query(
+    await db.query(
         `INSERT INTO companies
         VALUES ('${testcompany1.code}', '${testcompany1.name}', '${testcompany1.description}')
         RETURNING code, name, description`
         )
-
-    testcompany = result.rows[0]
 })
 
 afterEach(async() => {
     await db.query(`DELETE FROM companies`)
+    await db.query(`DELETE FROM invoices`)
 })
 
 afterAll(async() => {

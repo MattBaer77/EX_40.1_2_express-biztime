@@ -29,13 +29,11 @@ let testcompany5 = {code: "test5co", name: "Test5Co"};
 // })
 
 beforeEach(async() => {
-    const result = await db.query(
+    await db.query(
         `INSERT INTO companies
         VALUES ('${testcompany1.code}', '${testcompany1.name}', '${testcompany1.description}')
         RETURNING code, name, description`
         )
-
-    testcompany = result.rows[0]
 })
 
 afterEach(async() => {
@@ -54,7 +52,7 @@ describe("GET /companies", () => {
         const res = await request(app).get("/companies")
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.companies[0].code).toEqual(testcompany.code)
+        expect(res.body.companies[0].code).toEqual(testcompany1.code)
 
     })
 })
@@ -65,9 +63,9 @@ describe("GET /companies/:code", () => {
         const res = await request(app).get("/companies/test1co")
 
         expect(res.statusCode).toBe(200)
-        expect(res.body.company.code).toEqual(testcompany.code)
-        expect(res.body.company.name).toEqual(testcompany.name)
-        expect(res.body.company.description).toEqual(testcompany.description)
+        expect(res.body.company.code).toEqual(testcompany1.code)
+        expect(res.body.company.name).toEqual(testcompany1.name)
+        expect(res.body.company.description).toEqual(testcompany1.description)
 
     })
 
