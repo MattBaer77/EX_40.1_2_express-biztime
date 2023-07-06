@@ -43,3 +43,9 @@ FROM companies AS c
 LEFT JOIN invoices AS i
 ON c.code = i.comp_code
 WHERE code = 'yab';
+
+SELECT c.code, c.name, i.code, i.industry_name
+FROM companies AS c
+JOIN company_industry AS x ON c.code = x.comp_code
+JOIN industries AS i ON x.industry_code = i.code
+WHERE c.code = 'ibm';
