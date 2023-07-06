@@ -144,8 +144,40 @@ Needs to be given JSON like: {company: c_code}
 Returns obj of that industry with its associated companies: {industry_name, [companies.name ...]}
 */
 
-// router.put
+router.put('/:i_code', async (req, res, next) => {
 
+    try{
+
+        const validCompanies = await db.query(`SELECT c_code, name FROM companies`);
+
+        const validCompaniesCodes = validCompanies.rows.map((r) => {
+            return r.c_code;
+        })
+
+        const requestedCcode = req.body.company;
+
+        if (validCompaniesCodes.indexOf(requestedCcode) < 0) {
+            throw new ExpressError("Requested company code is not valid!", 400);
+        }
+
+        const requestedIndustry = req.params.i_code;
+
+        const result = await db.query(
+            `INSERT INTO company_industry (comp_code_ind, industry_code )
+            VALUES ($1, $2)
+            RETURNING comp_code_ind, industry_code
+            `,[requestedCcode, requestedIndustry]
+            )
+
+        return res.json(result.rows)
+ 
+    }catch(e){
+
+        return next(e);
+
+    }
+
+})
 
 
 
