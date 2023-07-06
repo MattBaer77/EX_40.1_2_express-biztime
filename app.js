@@ -23,6 +23,8 @@ app.use(function(req, res, next) {
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
 
+  console.log(err)
+
   return res.json({
     error: err
   });
