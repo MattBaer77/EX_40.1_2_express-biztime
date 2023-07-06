@@ -41,18 +41,13 @@ router.post('/', async (req, res, next) => {
 
     try{
 
-        console.log(req.body.industry_name)
-
         const industryName = req.body.industry_name
-
-        console.log(industryName)
 
         if (!industryName) {
             throw new ExpressError(`Error!: Could not create this industry. Bad Request - 'industry' must have properties: 'industry_name'`, 400)
         }
 
         const code = slugify(req.body.industry_name, {replacement:"-", lower:true, strict:true, trim:true})
-        console.log(industryName)
 
         const result = await db.query(
             `INSERT INTO industries
@@ -74,5 +69,85 @@ router.post('/', async (req, res, next) => {
     }
 
 })
+
+/*
+POST /industries/:id
+Adds companies to that industry.
+
+Needs to be given JSON like: {companies: [c_code...]}
+Returns obj of that industry with its associated companies: {industry_name, [companies.name ...]}
+*/
+
+// router.post('/:i_code', async (req, res, next) => {
+
+//     try{
+
+//         let message = "All of your company codes were valid."
+
+//         const validCompanies = await db.query(`SELECT c_code, name FROM companies`);
+
+//         const validCompaniesCodes = validCompanies.rows.map((r) => {
+//             return r.c_code
+//         })
+
+//         console.log(validCompaniesCodes)
+
+//         companies = req.body.companies
+
+//         console.log(companies)
+
+//         const verifiedCompaniesCodes = companies.filter((c) => {
+//             if (validCompaniesCodes.indexOf(c) != -1){
+//                 return c
+//             }
+//         })
+
+//         console.log(verifiedCompaniesCodes)
+
+//         if (companies.length === 0) {
+//             throw new ExpressError(`Error!: None of the company codes in your request are valid!`, 400)
+//         }
+
+//         if (companies.length != verifiedCompaniesCodes.length) {
+
+//             message = "Note: some of your company codes were not valid and were not added to this industry."
+
+//         }
+
+//         const result = await db.query(
+//             ``
+//             )
+
+
+
+
+
+//     }catch(e){
+
+//         return next(e);
+
+//     }
+
+
+
+
+
+
+
+// })
+
+/*
+PUT /industries/:id
+Adds companies to that industry.
+
+Needs to be given JSON like: {company: c_code}
+Returns obj of that industry with its associated companies: {industry_name, [companies.name ...]}
+*/
+
+// router.put
+
+
+
+
 
 module.exports = router;

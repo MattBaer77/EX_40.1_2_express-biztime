@@ -173,52 +173,6 @@ Needs to be given JSON like: {name, description}
 
 Returns update company object: {company: {code, name, description}}
 */
-// router.put('/:code', async (req, res, next) => {
-
-//     try{
-
-//         const code = req.params.code
-//         const name = req.body.name
-//         const description = req.body.description
-
-//         if (!name) {
-//             throw new ExpressError(`Error!: Could not edit this company. Bad Request - 'companies' must have properties: 'name'`, 400)
-//         }
-
-//         const result = await db.query(
-//             `UPDATE companies SET name = $2, description = $3 WHERE code = $1
-//             RETURNING code, name, description`,
-//             [code, name, description]
-//         )
-
-//         if (result.rows.length === 0) {
-//             throw new ExpressError(`Error!: No company found with code "${req.params.code}"`, 404)
-//         }
-
-//         return res.json(result.rows[0])
-
-//     } catch(e){
-
-//         return next(e);
-
-//     }
-
-// })
-
-
-// UPDATE HERE!
-/*
-PUT /companies/[code]
-Edit existing company.
-
-Should return 404 if company cannot be found.
-
-Needs to be given JSON like: {name, description}
-
-Optional: can add industries
-
-Returns update company object: {company: {code, name, description, [industries...]}}
-*/
 router.put('/:code', async (req, res, next) => {
 
     try{
@@ -250,7 +204,6 @@ router.put('/:code', async (req, res, next) => {
     }
 
 })
-
 
 /*
 DELETE /companies/[code]
