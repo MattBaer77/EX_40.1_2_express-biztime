@@ -11,6 +11,9 @@ app.use("/companies", companiesRoutes)
 const invoicesRoutes = require("./routes/invoices")
 app.use("/invoices", invoicesRoutes)
 
+const industriesRoutes = require("./routes/industries")
+app.use("/industries", industriesRoutes)
+
 /** 404 handler */
 
 app.use(function(req, res, next) {
