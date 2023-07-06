@@ -32,34 +32,82 @@ router.get('/', async (req, res, next) => {
 GET /companies/[code]
 Return obj of company: {company: {code, name, description}}
 If the company given cannot be found, this should return a 404 status response.
+Add Invoices
+*/
+// router.get('/:code', async (req, res, next) => {
+
+//     try{
+
+//         const result = await db.query(
+//             `SELECT c.code, c.name, c.description, i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date
+//             FROM companies AS c
+//             LEFT JOIN invoices AS i
+//             ON c.code = i.comp_code
+//             WHERE code = $1;`,
+//         [req.params.code]);
+
+//         if (result.rows.length === 0) {
+//             throw new ExpressError(`Error!: No company found with code "${req.params.code}"`, 404)
+//         }
+
+//         const {code, name, description} = result.rows[0];
+
+//         const invoices = result.rows.map((r) => {
+            
+//             if (r.id != null) {
+//                 return {id: r.id, comp_code: r.comp_code, amt: r.amt, paid: r.paid, add_date: r.add_date, paid_date : r.paid_date}
+//             }
+
+//         })
+
+//         return res.json({"company" : {code, name, description, invoices}})
+
+//     } catch(e){
+
+//         return next(e);
+
+//     }
+
+// })
+
+
+/*
+GET /companies/[code]
+Return obj of company: {company: {code, name, description}}
+If the company given cannot be found, this should return a 404 status response.
+Add Industry
 */
 router.get('/:code', async (req, res, next) => {
 
     try{
 
         const result = await db.query(
-            `SELECT c.code, c.name, c.description, i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date
+            `SELECT c.c_code, c.name, c.description, i.i_code, i.industry_name
             FROM companies AS c
-            LEFT JOIN invoices AS i
-            ON c.code = i.comp_code
-            WHERE code = $1;`,
+            JOIN company_industry AS x ON c.c_code = x.comp_code_ind
+            JOIN industries AS i ON x.industry_code = i.i_code
+            WHERE c.c_code = $1;`,
         [req.params.code]);
 
         if (result.rows.length === 0) {
             throw new ExpressError(`Error!: No company found with code "${req.params.code}"`, 404)
         }
 
-        const {code, name, description} = result.rows[0];
+        console.log(result.rows)
 
-        const invoices = result.rows.map((r) => {
+        const {c_code, name, description} = result.rows[0];
+
+        const industries = result.rows.map((r) => {
             
-            if (r.id != null) {
-                return {id: r.id, comp_code: r.comp_code, amt: r.amt, paid: r.paid, add_date: r.add_date, paid_date : r.paid_date}
+            if (r.industry_name != null) {
+                return {
+                    industry_name : r.industry_name
+                }
             }
 
         })
 
-        return res.json({"company" : {code, name, description, invoices}})
+        return res.json({"company" : {c_code, name, description, industries}})
 
     } catch(e){
 

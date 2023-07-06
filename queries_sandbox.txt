@@ -49,3 +49,22 @@ FROM companies AS c
 JOIN company_industry AS x ON c.code = x.comp_code
 JOIN industries AS i ON x.industry_code = i.code
 WHERE c.code = 'ibm';
+
+SELECT c.code, c.name, c.description, i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date, n.code, n.industry_name
+FROM companies AS c
+JOIN company_industry AS x ON c.code = x.comp_code
+JOIN industries AS n ON x.industry_code = n.code
+JOIN invoices AS i ON c.code = i.comp_code
+WHERE c.code = 'ibm';
+
+
+
+
+
+
+
+SELECT c.c_code, c.name, i.i_code, i.industry_name
+FROM companies AS c
+JOIN company_industry AS x ON c.c_code = x.comp_code_ind
+JOIN industries AS i ON x.industry_code = i.i_code
+WHERE c.c_code = 'ibm';
